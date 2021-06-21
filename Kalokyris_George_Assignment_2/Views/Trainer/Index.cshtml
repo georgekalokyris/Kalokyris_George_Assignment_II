@@ -1,0 +1,91 @@
+﻿@model IEnumerable<Kalokyris_George_Assignment_2.Models.Trainer>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Private School Trainers</h2>
+
+<p>
+    @Html.ActionLink("Create New Trainer", "Create")
+</p>
+
+@using (Html.BeginForm("Index", "Trainer", FormMethod.Get))
+{
+    <p>
+        First Name: @Html.TextBox("firstName")
+        Last Name: @Html.TextBox("lastName")
+        Salary(£): @Html.TextBox("salary")
+        Hire Year: @Html.DropDownList("Year", "All")
+    </p>
+    <input type="submit" class="btn btn-primary" />
+    @Html.ActionLink("Clear", "Index", "", new { @class = "btn btn-secondary" })
+}   @using (Html.BeginForm("Index", "Trainer", FormMethod.Get))
+{
+    <p>
+        Available: @Html.CheckBox("available")
+    </p>
+    
+    <input type="submit" class="btn btn-primary" />
+}
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Salary)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.HireDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.isAvailable)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Categories)
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Salary)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HireDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.isAvailable)
+            </td>
+            <td>
+                <ul>
+                    @foreach (var cat in item.Categories)
+                    {
+                        <li>@cat.Title</li>
+                    }
+                </ul>
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.TrainerId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.TrainerId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.TrainerId })
+            </td>
+        </tr>
+    }
+
+</table>
