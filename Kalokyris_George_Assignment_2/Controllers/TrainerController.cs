@@ -16,7 +16,7 @@ namespace Kalokyris_George_Assignment_2.Controllers
         private MyDatabase db = new MyDatabase();
 
         // GET: Trainer
-        public ActionResult Index(string firstName, string lastName, int? Year, bool? available, int salary = 0)
+        public ActionResult Index(string firstName, string lastName, int? Year, int salary = 0)
         {
             var Trainers = db.Trainers.ToList();
 
@@ -50,12 +50,6 @@ namespace Kalokyris_George_Assignment_2.Controllers
                 Trainers = Trainers.Where(x => x.HireDate.Year == Year).ToList();
             }
 
-            if (available.HasValue)
-            {
-                Trainers = Trainers.Where(x => x.isAvailable == available).ToList();
-            }
-
-
 
 
             return View(Trainers);
@@ -73,12 +67,21 @@ namespace Kalokyris_George_Assignment_2.Controllers
             {
                 return HttpNotFound();
             }
+
+
             return View(trainer);
         }
 
         // GET: Trainer/Create
         public ActionResult Create()
         {
+            ViewBag.SelectedCategories = db.Categories.ToList().Select(x => new SelectListItem()
+            {
+                Value = x.CategoryId.ToString(),
+                Text = x.Title
+            });
+
+
             return View();
         }
 
@@ -87,15 +90,38 @@ namespace Kalokyris_George_Assignment_2.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TrainerId,FirstName,LastName,Salary,HireDate,isAvailable")] Trainer trainer)
+        public ActionResult Create([Bind(Include = "TrainerId,FirstName,LastName,Salary,HireDate,isAvailable")] Trainer trainer, IEnumerable<int> SelectedCategories)
         {
             if (ModelState.IsValid)
             {
-                db.Trainers.Add(trainer);
+                db.Trainers.Attach(trainer);
+                db.Entry(trainer).Collection("Categories").Load();
+                trainer.Categories.Clear();
                 db.SaveChanges();
+
+                if(!(SelectedCategories is null))
+                {
+                    foreach (var id in SelectedCategories)
+                    {
+                        Category category = db.Categories.Find(id);
+                        if (category != null)
+                        {
+                            trainer.Categories.Add(category);
+                        }
+                    }
+                }
+
+                db.Entry(trainer).State = EntityState.Added;
+                db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
+            ViewBag.SelectedCategories = db.Categories.ToList().Select(x => new SelectListItem()
+            {
+                Value = x.CategoryId.ToString(),
+                Text = x.Title
+            });
             return View(trainer);
         }
 
@@ -106,11 +132,28 @@ namespace Kalokyris_George_Assignment_2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Trainer trainer = db.Trainers.Find(id);
+
             if (trainer == null)
             {
                 return HttpNotFound();
             }
+
+            var categoryIds = trainer.Categories.Select(x => x.CategoryId);
+
+
+
+            ViewBag.SelectedCategories = db.Categories.ToList().Select(x => new SelectListItem()
+            {
+                Value = x.CategoryId.ToString(),
+                Text = x.Title,
+                Selected = categoryIds.Any(y=>y == x.CategoryId)
+            });
+
+            
+
+
             return View(trainer);
         }
 
@@ -119,14 +162,38 @@ namespace Kalokyris_George_Assignment_2.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "TrainerId,FirstName,LastName,Salary,HireDate,isAvailable")] Trainer trainer)
+        public ActionResult Edit([Bind(Include = "TrainerId,FirstName,LastName,Salary,HireDate,isAvailable")] Trainer trainer, IEnumerable<int> SelectedCategories)
         {
             if (ModelState.IsValid)
             {
+                db.Trainers.Attach(trainer);
+                db.Entry(trainer).Collection("Categories").Load();
+                trainer.Categories.Clear();
+                db.SaveChanges();
+
+                if (!(SelectedCategories is null))
+                {
+                    foreach (var id in SelectedCategories)
+                    {
+                        Category category = db.Categories.Find(id);
+                        if (category != null)
+                        {
+                            trainer.Categories.Add(category);
+                        }
+                    }
+                }
+
                 db.Entry(trainer).State = EntityState.Modified;
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
+
+            ViewBag.SelectedCategories = db.Categories.ToList().Select(x => new SelectListItem()
+            {
+                Value = x.CategoryId.ToString(),
+                Text = x.Title
+            });
             return View(trainer);
         }
 

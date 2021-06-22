@@ -50,6 +50,18 @@
             @Html.DisplayFor(model => model.isAvailable)
         </dd>
 
+        <dt>
+            @Html.DisplayNameFor(model => model.Categories)
+        </dt>
+        <dd>
+            <ul>
+                @foreach (var cat in Model.Categories)
+                {
+                <li>@cat.Title</li>
+                }
+            </ul>
+        </dd>
+
     </dl>
 </div>
 <p>

@@ -10,24 +10,18 @@
     @Html.ActionLink("Create New Trainer", "Create")
 </p>
 
-@using (Html.BeginForm("Index", "Trainer", FormMethod.Get))
+@using (Html.BeginForm("Index", "Trainer", FormMethod.Post))
 {
-    <p>
-        First Name: @Html.TextBox("firstName")
-        Last Name: @Html.TextBox("lastName")
-        Salary(£): @Html.TextBox("salary")
-        Hire Year: @Html.DropDownList("Year", "All")
-    </p>
+<p>
+    First Name: @Html.TextBox("firstName")
+    Last Name: @Html.TextBox("lastName")
+    Salary(£): @Html.TextBox("salary")
+    Hire Year: @Html.DropDownList("Year", "All")
+</p>
     <input type="submit" class="btn btn-primary" />
     @Html.ActionLink("Clear", "Index", "", new { @class = "btn btn-secondary" })
-}   @using (Html.BeginForm("Index", "Trainer", FormMethod.Get))
-{
-    <p>
-        Available: @Html.CheckBox("available")
-    </p>
-    
-    <input type="submit" class="btn btn-primary" />
 }
+
 
 
 <table class="table">
@@ -51,7 +45,7 @@
             @Html.DisplayNameFor(model => model.Categories)
         </th>
 
-        <th></th>
+        <th>Actions</th>
     </tr>
 
     @foreach (var item in Model)

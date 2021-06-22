@@ -31,7 +31,9 @@ namespace Kalokyris_George_Assignment_2.Models
         [Display(Name = "Hire Date")]
         [Required(ErrorMessage = "Hire Date is Required")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd.MM.yyyy}")]
-        [Range(typeof(DateTime), "01-01-2010", "31-12-2021", ErrorMessage = "Trainer's Hire Date must be between 2010 and Today")]
+        [DataType(DataType.Date)]
+        //[Range(typeof(DateTime), "1/1/2010", "1/1/2022", ErrorMessage = "Trainer's Hire Date must be between 2010 and 2021")] ////This was not working
+        [CustomValidation(typeof(CustomValidationMethods), "ValidateHireDate")] //So I created this which evaluates dates between 2010 and now
         public DateTime HireDate { get; set; }
 
         [Display(Name = "Trainer Available")]

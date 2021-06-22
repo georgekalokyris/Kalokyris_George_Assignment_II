@@ -26,5 +26,19 @@ namespace Kalokyris_George_Assignment_2.Models
                 return new ValidationResult(string.Format($"The field {context.MemberName} must be greated or equal to 0"));
             }
         }
+
+        
+        public static ValidationResult ValidateHireDate(DateTime hireDate)
+        {
+            if(hireDate.Year > DateTime.Now.Year || hireDate.Year < 2010)
+            {
+                return new ValidationResult($"The hire date must be between 2010 and {DateTime.Now.Year}");
+            }
+
+            return ValidationResult.Success;
+        }
+
+
+
     }
 }
