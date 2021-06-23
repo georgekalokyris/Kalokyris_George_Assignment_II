@@ -18,11 +18,13 @@
 
 @using (Html.BeginForm("Index", "Trainer", FormMethod.Get))
 {
-    <p>
-        First Name: @Html.TextBox("firstName")
-        Last Name: @Html.TextBox("lastName")
-        Salary(£): @Html.TextBox("salary", "")
-        Hire Year: @Html.DropDownList("Year", "All")
+    <p class="text-center">
+        <div style="color:black !important; font-weight:bold !important;"class="panel-primary list-group-item active">
+            First Name: @Html.TextBox("firstName") Last Name: @Html.TextBox("lastName")  Salary(£): @Html.TextBox("salary", "")
+            Hire Year: @Html.DropDownList("Year", "All")
+        </div>
+        
+       
     </p>
     <input type="submit" class="btn btn-primary" />
     @Html.ActionLink("Clear", "Index", "", new { @class = "btn btn-secondary" })
