@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using Kalokyris_George_Assignment_2.DAL;
 using Kalokyris_George_Assignment_2.Models;
+using PagedList;
 
 namespace Kalokyris_George_Assignment_2.Controllers
 {
@@ -16,7 +17,7 @@ namespace Kalokyris_George_Assignment_2.Controllers
         private MyDatabase db = new MyDatabase();
 
         // GET: Trainer
-        public ActionResult Index(string firstName, string lastName, int? Year, string sortOrder,int salary = 0)
+        public ActionResult Index(string firstName, string lastName, int? Year, string sortOrder, int? page, int salary = 0)
         {
             
             var Trainers = db.Trainers.ToList();
@@ -25,18 +26,22 @@ namespace Kalokyris_George_Assignment_2.Controllers
             if (!String.IsNullOrEmpty(firstName))
             {
                 Trainers = Trainers.Where(x => x.FirstName.ToUpper().Contains(firstName.ToUpper())).ToList();
+                ViewBag.CurrentFilter = firstName;
             }
             
             if (!String.IsNullOrEmpty(lastName))
             {
                 Trainers = Trainers.Where(x => x.LastName.ToUpper().Contains(lastName.ToUpper())).ToList();
+                ViewBag.CurrentFilter = lastName;
+
             }
 
-            Trainers = Trainers.Where(x => x.Salary >= salary).ToList();
 
             if (salary > 0)
             {
                 Trainers = Trainers.Where(x => x.Salary == salary).ToList();
+                ViewBag.CurrentFilter = salary;
+
             }
 
             var Years = new List<int>();
@@ -77,10 +82,15 @@ namespace Kalokyris_George_Assignment_2.Controllers
             }
 
             //Pagination
+            int pageSize = 3;
+            int pageNumber = (page ?? 1);
+            SearchModel sm = new SearchModel() {trains = Trainers.ToPagedList(pageNumber, pageSize), filtering = ViewBag.CurrentFilter, sorting = sortOrder, pageSize = 3, pageNumber = (page ?? 1), sFirstName = firstName, sLastName = lastName, sHireYear = Year, sSalary = salary};
 
 
-            return View(Trainers);
+            return View(sm);
         }
+
+        
 
         // GET: Trainer/Details/5
         public ActionResult Details(int? id)

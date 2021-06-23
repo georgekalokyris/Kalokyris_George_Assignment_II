@@ -1,30 +1,36 @@
-﻿@model IEnumerable<Kalokyris_George_Assignment_2.Models.Trainer>
+﻿@*@model PagedList.IPagedList<Kalokyris_George_Assignment_2.Models.Trainer>*@
 
+@model Kalokyris_George_Assignment_2.Models.SearchModel
+
+
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 @{
     ViewBag.Title = "Index";
 }
-
-<h2>Private School Trainers</h2>
-
+<div style="text-align:center;">
+    <p><h2><del>The office cast</del></h2></p>
+    <h2>Private School Trainers</h2>
+</div>
 <p>
     @Html.ActionLink("Create New Trainer", "Create")
 </p>
 
-@using (Html.BeginForm("Index", "Trainer", FormMethod.Post))
+@using (Html.BeginForm("Index", "Trainer", FormMethod.Get))
 {
-<p>
-    First Name: @Html.TextBox("firstName")
-    Last Name: @Html.TextBox("lastName")
-    Salary(£): @Html.TextBox("salary")
-    Hire Year: @Html.DropDownList("Year", "All")
-</p>
+    <p>
+        First Name: @Html.TextBox("firstName")
+        Last Name: @Html.TextBox("lastName")
+        Salary(£): @Html.TextBox("salary", "")
+        Hire Year: @Html.DropDownList("Year", "All")
+    </p>
     <input type="submit" class="btn btn-primary" />
     @Html.ActionLink("Clear", "Index", "", new { @class = "btn btn-secondary" })
 }
 
 
 
-<table class="table">
+<table style="border-width:thick; margin-top:20px;" class="table table-bordered", new >
     <tr>
         <th>
             @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstNameSort, currentFilter = ViewBag.CurrentFilter })
@@ -42,13 +48,13 @@
             @Html.ActionLink("Trainer Available", "Index", new { sortOrder = ViewBag.TrainerAvailable, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Categories)
+            @Html.Label("Categories")
         </th>
 
         <th>Actions</th>
     </tr>
 
-    @foreach (var item in Model)
+    @foreach (var item in Model.trains)
     {
         <tr>
             <td>
@@ -83,3 +89,14 @@
     }
 
 </table>
+
+
+@Html.PagedListPager(Model.trains, page => Url.Action("Index", new
+{
+    page,
+    sortOrder = Model.sorting,
+    firstName = Model.sFirstName,
+    lastName = Model.sLastName,
+    Year = Model.sHireYear,
+    salary = Model.sSalary
+}))
